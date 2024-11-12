@@ -1,5 +1,6 @@
 package com.rickapp.transfers.feature.splash
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ fun SplashScreen(
     splashViewModel: SplashViewModel = hiltViewModel()
 ) {
     val startNextScreen: Boolean by splashViewModel.startNextScreen.observeAsState(false)
+    val logoTypeSelected: LogoType by splashViewModel.logoTypeSelected.observeAsState(LogoType.WithoutColor)
 
     if (startNextScreen) {
         navController.popBackStack()
@@ -39,11 +42,24 @@ fun SplashScreen(
             .background(Primary),
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.logo_whitout_color),
-            contentDescription = null,
-            modifier = Modifier.size(250.dp)
-        )
+        Crossfade(targetState = logoTypeSelected, label = "Logo") { logoTypeSelected ->
+            when (logoTypeSelected) {
+                LogoType.WithoutColor -> {
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.logo_whitout_color),
+                        contentDescription = null,
+                        modifier = Modifier.size(250.dp)
+                    )
+                }
+                LogoType.WithColor -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.loco_color),
+                        contentDescription = null,
+                        modifier = Modifier.size(250.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
